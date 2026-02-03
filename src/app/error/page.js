@@ -1,4 +1,7 @@
+"use client";
+
 import React from 'react';
+import Link from 'next/link';
 
 export default function ErrorPage() {
   return (
@@ -66,9 +69,9 @@ export default function ErrorPage() {
         </button>
         
         <div className="mt-4">
-          <link href="/" className="text-blue-400 hover:text-blue-300 transition-colors duration-300">
+          <Link href="/" className="text-blue-400 hover:text-blue-300 transition-colors duration-300">
             Return to Homepage
-        </link>
+          </Link>
         </div>
       </div>
     </div>

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '../../../lib/auth';
+import { isAuthenticated } from '../../lib/auth';
 
 export default function PaymentGateway(data) {
     const [amount, setAmount] = useState('');
@@ -13,7 +13,7 @@ export default function PaymentGateway(data) {
     const [isPaid, setIsPaid] = useState(false);
     const [demoMode, setDemoMode] = useState(false);
     const router = useRouter();
-    const isLoggedIn = useAuth(); 
+    const isLoggedIn = isAuthenticated(); 
 
     useEffect(() => {
         const urlParams = new URLSearchParams(window.location.search);
