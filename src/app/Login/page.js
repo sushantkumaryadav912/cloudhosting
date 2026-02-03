@@ -90,47 +90,52 @@ const LoginComponent = () => {
     return () => clearInterval(noiseInterval);
   }, []);
 
+  // Dummy user data for demo
+  const dummyUsers = [
+    { username: "demo", email: "demo@example.com", password: "demo123" },
+    { username: "user", email: "user@example.com", password: "user123" },
+    { username: "admin", email: "admin@example.com", password: "admin123" },
+  ];
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setFormState({ ...formState, isLoading: true, isError: false });
   
-    try {
-      const formData = new FormData();
-      formData.append("id", formState.userIdentifier);
-      formData.append("password", formState.password);
-  
-      const response = await fetch("https://cloudhostingbackend.zeyo.xyz/api/user/auth", {
-        method: "POST",
-        headers: {
-          "x-api-key": process.env.NEXT_PUBLIC_ZEYO_API_KEY,
-        },
-        body: formData,
-      });
-  
-      const data = await response.json();
-  
-      if (response.ok) {
-        setFormState({ ...formState, isLoading: false, isSuccess: true });
-        Cookies.set('auth_token', data.token, { expires: 1 / 24 }); // 1 hour
-        setTimeout(() => {
-          router.push("/Dashboard");
-        }, 2000);
-      } else {
+    // Simulate API delay
+    setTimeout(() => {
+      try {
+        // Check if user exists in dummy data
+        const user = dummyUsers.find(
+          u => (u.username === formState.userIdentifier || u.email === formState.userIdentifier) 
+            && u.password === formState.password
+        );
+
+        if (user) {
+          // Generate a dummy token
+          const dummyToken = `token_${user.username}_${Date.now()}`;
+          setFormState({ ...formState, isLoading: false, isSuccess: true });
+          Cookies.set('auth_token', dummyToken, { expires: 1 / 24 }); // 1 hour
+          Cookies.set('user_data', JSON.stringify({ username: user.username, email: user.email }), { expires: 1 / 24 });
+          setTimeout(() => {
+            router.push("/Dashboard");
+          }, 2000);
+        } else {
+          setFormState({
+            ...formState,
+            isLoading: false,
+            isError: true,
+            errorMessage: "Invalid username/email or password. Try demo/demo123",
+          });
+        }
+      } catch (error) {
         setFormState({
           ...formState,
           isLoading: false,
           isError: true,
-          errorMessage: data.message || "Invalid username/email or password",
+          errorMessage: "Error during authentication",
         });
       }
-    } catch (error) {
-      setFormState({
-        ...formState,
-        isLoading: false,
-        isError: true,
-        errorMessage: "Error connecting to authentication service",
-      });
-    }
+    }, 1500); // 1.5 second delay to simulate API call
   };
   
 

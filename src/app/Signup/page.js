@@ -144,49 +144,32 @@ const SignupComponent = () => {
       return;
     }
   
-    try {
-      const formData = new FormData();
-      formData.append("username", formState.username);
-      formData.append("email", formState.email);
-      formData.append("password", formState.password);
-      formData.append("role", "user");
-  
-      // Debug: log formData
-      for (let pair of formData.entries()) {
-        console.log(`${pair[0]}: ${pair[1]}`);
+    // Simulate API delay
+    setTimeout(() => {
+      try {
+        // Dummy registration - always succeeds if validations pass
+        const dummyToken = `token_${formState.username}_${Date.now()}`;
+        setFormState({ ...formState, isLoading: false, isSuccess: true });
+        Cookies.set('auth_token', dummyToken, { expires: 1 / 24 });
+        Cookies.set('user_data', JSON.stringify({ 
+          username: formState.username, 
+          email: formState.email,
+          role: "user"
+        }), { expires: 1 / 24 });
+
+        setTimeout(() => {
+          router.push("/Dashboard");
+        }, 2000);
+      } catch (error) {
+        console.error("Submission error:", error);
+        setFormState({
+          ...formState,
+          isLoading: false,
+          isError: true,
+          errorMessage: error.message || "Error processing signup",
+        });
       }
-  
-      const response = await fetch("https://cloudhostingbackend.zeyo.xyz/api/user/register", {
-        method: "POST",
-        headers: {
-          "x-api-key": process.env.NEXT_PUBLIC_ZEYO_API_KEY,
-        },
-        body: formData,
-      });
-  
-      const data = await response.json();
-      console.log("API Response:", data);
-  
-      if (!response.ok) {
-        throw new Error(data.error || "Registration failed");
-      }
-  
-      setFormState({ ...formState, isLoading: false, isSuccess: true });
-      Cookies.set('auth_token', data.token, { expires: 1 / 24 });
-  
-      setTimeout(() => {
-        router.push("/Dashboard");
-      }, 2000);
-  
-    } catch (error) {
-      console.error("Submission error:", error);
-      setFormState({
-        ...formState,
-        isLoading: false,
-        isError: true,
-        errorMessage: error.message || "Error processing signup",
-      });
-    }
+    }, 1500); // 1.5 second delay to simulate API call
   };
   
 
