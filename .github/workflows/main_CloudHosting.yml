@@ -23,14 +23,13 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Prepare standalone bundle
+      - name: Prepare deployment
         run: |
           rm -rf deploy
           mkdir deploy
-          cp -r .next/standalone/* deploy/
-          mkdir -p deploy/.next
-          cp -r .next/static deploy/.next/
+          cp -r .next deploy/.next
           cp -r public deploy/
+          cp server.js deploy/
           cp package.json deploy/
 
       - name: Deploy to Azure
